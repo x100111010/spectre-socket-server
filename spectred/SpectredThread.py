@@ -7,37 +7,42 @@ from google.protobuf import json_format
 from grpc._channel import _MultiThreadedRendezvous
 
 from . import messages_pb2_grpc
-from .messages_pb2 import SpectredMessage
+from .messages_pb2 import SpectredRequest
 
 
 MAX_MESSAGE_LENGTH = 1024 * 1024 * 1024  # 1GB
 
 
-class SpectredCommunicationError(Exception): pass
+class SpectredCommunicationError(Exception):
+    pass
 
 
-# pipenv run python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./protos/rpc.proto ./protos/messages.proto ./protos/p2p.proto
+# pipenv run python -m grpc_tools.protoc -I./protos --python_out=. --grpc_python_out=. ./protos/rpc.proto ./protos/messages.proto
+
 
 class SpectredThread(object):
     def __init__(self, spectred_host, spectred_port, async_thread=True):
-
         self.spectred_host = spectred_host
         self.spectred_port = spectred_port
 
         if async_thread:
-            self.channel = grpc.aio.insecure_channel(f'{spectred_host}:{spectred_port}',
-                                                     compression=grpc.Compression.Gzip,
-                                                     options=[
-                                                         ('grpc.max_send_message_length', MAX_MESSAGE_LENGTH),
-                                                         ('grpc.max_receive_message_length', MAX_MESSAGE_LENGTH),
-                                                     ])
+            self.channel = grpc.aio.insecure_channel(
+                f"{spectred_host}:{spectred_port}",
+                compression=grpc.Compression.Gzip,
+                options=[
+                    ("grpc.max_send_message_length", MAX_MESSAGE_LENGTH),
+                    ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+                ],
+            )
         else:
-            self.channel = grpc.insecure_channel(f'{spectred_host}:{spectred_port}',
-                                                 compression=grpc.Compression.Gzip,
-                                                 options=[
-                                                     ('grpc.max_send_message_length', MAX_MESSAGE_LENGTH),
-                                                     ('grpc.max_receive_message_length', MAX_MESSAGE_LENGTH),
-                                                 ])
+            self.channel = grpc.insecure_channel(
+                f"{spectred_host}:{spectred_port}",
+                compression=grpc.Compression.Gzip,
+                options=[
+                    ("grpc.max_send_message_length", MAX_MESSAGE_LENGTH),
+                    ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+                ],
+            )
             self.__sync_queue = Queue()
         self.stub = messages_pb2_grpc.RPCStub(self.channel)
 
@@ -54,7 +59,9 @@ class SpectredThread(object):
     async def request(self, command, params=None, wait_for_response=True, timeout=120):
         if wait_for_response:
             try:
-                async for resp in self.stub.MessageStream(self.yield_cmd(command, params), timeout=120):
+                async for resp in self.stub.MessageStream(
+                    self.yield_cmd(command, params), timeout=120
+                ):
                     self.__queue.put_nowait("done")
                     return json_format.MessageToDict(resp)
             except grpc.aio._call.AioRpcError as e:
@@ -73,7 +80,7 @@ class SpectredThread(object):
             raise SpectredCommunicationError(str(e))
 
     async def yield_cmd(self, cmd, params=None):
-        msg = SpectredMessage()
+        msg = SpectredRequest()
         msg2 = getattr(msg, cmd)
         payload = params
 
@@ -88,7 +95,7 @@ class SpectredThread(object):
         await self.__queue.get()
 
     def yield_cmd_sync(self, cmd, params=None):
-        msg = SpectredMessage()
+        msg = SpectredRequest()
         msg2 = getattr(msg, cmd)
         payload = params
 

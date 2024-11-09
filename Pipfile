@@ -4,18 +4,18 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-grpcio = "*"
-grpcio-tools = "*"
-fastapi = "*"
-uvicorn = "*"
-gunicorn = "*"
-requests = "*"
-websockets = "*"
-fastapi-utils = "*"
-python-socketio = "*"
-psycopg2 = {extras = ["async"], version = "*"}
-asyncpg = "*"
-cachetools = "*"
+grpcio = "1.63.0"
+grpcio-tools = "1.63.0"
+fastapi = "0.110.3"
+uvicorn = "0.29.0"
+gunicorn = "22.0.0"
+requests = "2.31.0"
+websockets = "12.0"
+fastapi-utils = "0.2.1"
+python-socketio = "5.11.4"
+psycopg2-binary = "2.9.9"
+asyncpg = "0.29.0"
+cachetools = "5.3.3"
 
 [requires]
-python_version = "3.10"
+python_version = "3.12"
