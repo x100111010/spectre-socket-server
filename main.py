@@ -1,7 +1,7 @@
 # encoding: utf-8
 import asyncio
 import os
-from asyncio import Task, InvalidStateError
+from asyncio import InvalidStateError
 
 from fastapi_utils.tasks import repeat_every
 from starlette.responses import RedirectResponse
@@ -15,7 +15,8 @@ from sockets.coinsupply import periodic_coin_supply
 
 print(
     f"Loaded: {sockets.join_room}"
-    f"{periodic_coin_supply} {periodical_blockdag} {periodical_blue_score}")
+    f"{periodic_coin_supply} {periodical_blockdag} {periodical_blue_score}"
+)
 
 BLOCKS_TASK = None  # type: Task
 
@@ -38,18 +39,20 @@ async def watchdog():
     except InvalidStateError:
         pass
     else:
-        print(f"Watch found an error! {exception}\n"
-              f"Reinitialize spectreds and start task again")
+        print(
+            f"Watch found an error! {exception}\n"
+            f"Reinitialize spectreds and start task again"
+        )
         await spectred_client.initialize_all()
         BLOCKS_TASK = asyncio.create_task(blocks.config())
 
 
 @app.get("/", include_in_schema=False)
 async def docs_redirect():
-    return RedirectResponse(url='/docs')
+    return RedirectResponse(url="/docs")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if os.getenv("DEBUG"):
         import uvicorn
 

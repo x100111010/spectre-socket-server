@@ -16,16 +16,24 @@ async def config():
         global BLOCKS_CACHE
 
         emit_info = {
-            'block_hash': block_info["verboseData"]["hash"],
-            'difficulty': block_info["verboseData"]["difficulty"],
-            'blueScore': block_info["header"]["blueScore"],
-            'timestamp': block_info["header"]["timestamp"],
-            'txCount': len(block_info["transactions"]),
-            'txs': [{
-                'txId': x["verboseData"]["transactionId"],
-                'outputs': [(output["verboseData"]["scriptPublicKeyAddress"], output["amount"]) for output in
-                            x["outputs"][-20:]]
-            } for x in block_info["transactions"][-20:]]
+            "block_hash": block_info["verboseData"]["hash"],
+            "difficulty": block_info["verboseData"]["difficulty"],
+            "blueScore": block_info["header"]["blueScore"],
+            "timestamp": block_info["header"]["timestamp"],
+            "txCount": len(block_info["transactions"]),
+            "txs": [
+                {
+                    "txId": x["verboseData"]["transactionId"],
+                    "outputs": [
+                        (
+                            output["verboseData"]["scriptPublicKeyAddress"],
+                            output["amount"],
+                        )
+                        for output in x["outputs"][-20:]
+                    ],
+                }
+                for x in block_info["transactions"][-20:]
+            ],
         }
 
         BLOCKS_CACHE.append(emit_info)

@@ -22,4 +22,3 @@ async def join_room(sid, room_name):
 
         if room_name == "bluescore":
             await emit_bluescore()
-

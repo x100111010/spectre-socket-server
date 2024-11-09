@@ -1,5 +1,4 @@
 # encoding: utf-8
-import threading
 
 from fastapi_utils.tasks import repeat_every
 
