@@ -20,6 +20,7 @@ async def config():
             "difficulty": block_info["verboseData"]["difficulty"],
             "blueScore": block_info["header"]["blueScore"],
             "timestamp": block_info["header"]["timestamp"],
+            "verboseData": block_info["verboseData"],
             "txCount": len(block_info["transactions"]),
             "txs": [
                 {
